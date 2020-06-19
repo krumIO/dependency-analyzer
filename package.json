@@ -1,0 +1,22 @@
+{
+  "name": "dependency_analyzer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krumIO/dependency-analyzer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/krumIO/dependency-analyzer/issues"
+  },
+  "homepage": "https://github.com/krumIO/dependency-analyzer#readme",
+  "dependencies": {
+    "php-parser": "^3.0.1"
+  }
+}
