@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var fs = require('fs');
 var engine = require('php-parser');
 var path = require('path');
@@ -33,26 +35,34 @@ let getIncludes = (parsed, path) => {
     let includes = [];
     if (parsed.children) {
       parsed.children.forEach((child) => {
-          if (child?.expression?.kind === 'include') {
+          if (child && child.expression && child.expression.kind === 'include') {
             let target = child.expression.target;
             let includePath = '';
             let prefix = '';
             if (target.kind === 'bin') {
-              if (target?.left?.what?.name === 'dirname') {
-                  if (target?.left?.arguments[0]?.value === '__FILE__') {
-                    prefix = path.substring(0, path.lastIndexOf('/'));
-                    // TODO: figure out prefix handling for other cases
+              if (
+                target &&
+                target.left &&
+                target.left.what &&
+                target.left.what.name === 'dirname') {
+                  if (
+                    target &&
+                    target.left &&
+                    target.left.arguments[0] &&
+                    target.left.arguments[0].value === '__FILE__') {
+                      prefix = path.substring(0, path.lastIndexOf('/'));
+                      // TODO: figure out prefix handling for other cases
                   }
               }
-              if (target?.right?.value) {
+              if (target && target.right && target.right.value) {
                   includePath = target.right.value;
               }
             }
-            else if (target.kind === 'variable' || target?.what?.kind === 'variable') {
+            else if (target.kind === 'variable' || target && target.what && target.what.kind === 'variable') {
                 includePath = 'VARIABLE';
             }
             else if (target.kind === 'call') {
-                if (target?.arguments[0].value) {
+                if (target && target.arguments[0] && target.arguments[0].value) {
                     includePath = target.arguments[0].value;
                 }
             }

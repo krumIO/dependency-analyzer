@@ -12,6 +12,9 @@
   },
   "author": "",
   "license": "ISC",
+  "bin": {
+    "depa-php": "./index.js"
+  },
   "bugs": {
     "url": "https://github.com/krumIO/dependency-analyzer/issues"
   },
