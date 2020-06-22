@@ -51,7 +51,6 @@ let getIncludes = (parsed, path) => {
                     target.left.arguments[0] &&
                     target.left.arguments[0].value === '__FILE__') {
                       prefix = path.substring(0, path.lastIndexOf('/'));
-                      // TODO: figure out prefix handling for other cases
                   }
               }
               if (target && target.right && target.right.value) {
@@ -59,14 +58,17 @@ let getIncludes = (parsed, path) => {
               }
             }
             else if (target.kind === 'variable' || target && target.what && target.what.kind === 'variable') {
+                prefix = path.substring(0, path.lastIndexOf('/'));
                 includePath = 'VARIABLE';
             }
             else if (target.kind === 'call') {
                 if (target && target.arguments[0] && target.arguments[0].value) {
+                    prefix = path.substring(0, path.lastIndexOf('/'));
                     includePath = target.arguments[0].value;
                 }
             }
             else if (target.value) {
+              prefix = path.substring(0, path.lastIndexOf('/'));
               includePath = target.value;
             }
             else {
@@ -108,4 +110,23 @@ walkSync(process.argv[2], (path) => {
   }
 });
 
-fs.writeFileSync('output', JSON.stringify(includes, null, 2));
+let nodesSet = new Set();
+let edges = [];
+includes.forEach((entry) => {
+    nodesSet.add(entry.path);
+    entry.includes.forEach((include) => {
+        edges.push({
+            source: entry.path,
+            target: include,
+        });
+        nodesSet.add(include)
+    })
+})
+let nodes = Array.from(nodesSet);
+
+let data = {
+    nodes: nodes,
+    edges: edges,
+};
+
+fs.writeFileSync('output', JSON.stringify(data, null, 2));
