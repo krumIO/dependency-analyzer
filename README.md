@@ -1,6 +1,6 @@
 # dependency-analyzer
 
-### Manual Installation
+## Manual Installation
 
 From the root directory of the project, run:
 ```
@@ -12,9 +12,9 @@ To be able to run this tool outside of the project directory, run:
 npm link
 ```
 
-### How to use
+## How to use
 
-#### PHP
+### PHP
 
 To analyze a PHP project, run:
 
