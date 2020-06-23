@@ -26,11 +26,12 @@ This will analyze the current directory for all  <a href="#supported-languages">
 
 ```
 Options:
-  -e, --extensions  Extensions to analyze                              [array]
+  -e, --extensions  Extensions to analyze                              [array] [choices: "php"]
   -d, --directory   Directory to analyze                               [string]
   -o, --output      Output file name (default=output)                  [string]
+  -t, --type        Output file format (default=json)                  [string] [choices: "json", "dot"]
   -v, --version     Show version number                                [boolean]
-  -h, --help        Show help                                          [boolean]
+  -h, --help        Show help                                          [boolean
 ```
 
 #### Example
@@ -38,10 +39,10 @@ Options:
 Running
 
 ```
-depa -e php js -d ./myPhpProject/ -o myPhpProjectAnalysis.json
+depa -e php js -d ./myPhpProject/ -o myPhpProjectAnalysis.json -t json
 ```
 
-will analyze the `./myPhpProject/` directory for `*.php` and `*.js` files and write the output to the `myPhpProjectAnalysis.json` file.
+will analyze the `./myPhpProject/` directory for `*.php` and `*.js` files and write the output to the `myPhpProjectAnalysis.json` file in the `json` format
 
 *NOTE: `js` is not yet supported.*
 
@@ -51,7 +52,7 @@ Currently, the only supported language is `php`, but there are plans to support 
 
 ## Output
 
-Output is currently a file with the following JSON-formatted structure:
+Output is currently either a file with the following JSON-formatted structure:
 
 ```
 {
@@ -67,3 +68,5 @@ Output is currently a file with the following JSON-formatted structure:
     ]
 }
 ```
+
+or a `DOT` format file for use with Graphviz.
