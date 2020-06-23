@@ -20,7 +20,7 @@ To generally analyze a project's internal dependency structure, run:
 depa
 ```
 
-This will analyze the current directory for all  <a href="#supportedLanguages">supported languages</a>.
+This will analyze the current directory for all  <a href="#supported-languages">supported languages</a>.
 
 ### Options
 
