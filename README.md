@@ -44,6 +44,25 @@ will analyze the `./myPhpProject/` directory for `*.php` and `*.js` files and wr
 
 *NOTE: `js` is not yet supported.*
 
-### Supported languages
+## Supported languages
 
 Currently, the only supported language is `php`, but there are plans to support more languages.
+
+## Output
+
+Output is currently a file with the following JSON-formatted structure:
+
+```
+{
+    "nodes": [
+        <An array of strings representing all of the files involved in the dependency graph>
+    ],
+    "edges": [
+        {
+            "source": <A string representing the source file>,
+            "target": <A string representing the target/dependency file>
+        },
+        ...
+    ]
+}
+```
