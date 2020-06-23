@@ -17,9 +17,10 @@ npm link
 To generally analyze a project's internal dependency structure, run:
 
 ```
-// analyze the current directory for all supported languages
 depa
 ```
+
+This will analyze the current directory for all  <a href="#supportedLanguages">supported languages</a>.
 
 ### Options
 
