@@ -1,40 +1,28 @@
-#!/usr/bin/env node
 
-var fs = require('fs');
-var engine = require('php-parser');
-var path = require('path');
+const engine = require('php-parser');
 
-// initialize a new parser instance
-var parser = new engine({
-  // some options :
-  parser: {
-    extractDoc: true,
-    php7: true,
-    suppressErrors: true,
-  },
-  ast: {
-    withPositions: true
-  }
-});
-
-const walkSync = (dir, callback) => {
-  const files = fs.readdirSync(dir);
-  files.forEach((file) => {
-    var filepath = path.join(dir, file);
-    const stats = fs.statSync(filepath);
-    if (stats.isDirectory()) {
-      walkSync(filepath, callback);
-    } else if (stats.isFile()) {
-      callback(filepath, stats);
-    }
-  });
+module.exports.retrieveDependencies = (file, path) => {
+    let ast = parser.parseCode(file);
+    return getIncludes(ast, path);
 };
 
-// Load a static file (Note: this file should exist on your computer)
-let getIncludes = (parsed, path) => {
+// initialize a new parser instance
+const parser = new engine({
+    // some options :
+    parser: {
+      extractDoc: false,
+      php7: true,
+      suppressErrors: true,
+    },
+    ast: {
+      withPositions: true
+    }
+  });
+
+const getIncludes = (ast, path) => {
     let includes = [];
-    if (parsed.children) {
-      parsed.children.forEach((child) => {
+    if (ast.children) {
+      ast.children.forEach((child) => {
           if (child && child.expression && child.expression.kind === 'include') {
             let target = child.expression.target;
             let includePath = '';
@@ -83,50 +71,7 @@ let getIncludes = (parsed, path) => {
       });
     }
     else {
-      // console.log('expected children for ' + parsed);
+      // console.log('expected children for ' + ast);
     }
     return includes;
 }
-
-let includes = [];
-walkSync(process.argv[2], (path) => {
-  if (path.endsWith('.php')) {
-    let phpFile = fs.readFileSync(path);
-    try {
-      let parsed = parser.parseCode(phpFile);
-
-      let currentFileIncludes = getIncludes(parsed, path);
-      includes.push({
-        path: path,
-        includes: currentFileIncludes,
-      });
-    }
-    catch (error) {
-      includes.push({
-          path: path,
-          includes: ['ERROR'],
-      });
-    }
-  }
-});
-
-let nodesSet = new Set();
-let edges = [];
-includes.forEach((entry) => {
-    nodesSet.add(entry.path);
-    entry.includes.forEach((include) => {
-        edges.push({
-            source: entry.path,
-            target: include,
-        });
-        nodesSet.add(include)
-    })
-})
-let nodes = Array.from(nodesSet);
-
-let data = {
-    nodes: nodes,
-    edges: edges,
-};
-
-fs.writeFileSync('output', JSON.stringify(data, null, 2));

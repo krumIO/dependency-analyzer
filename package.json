@@ -2,7 +2,7 @@
   "name": "dependency_analyzer",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,13 +13,14 @@
   "author": "",
   "license": "ISC",
   "bin": {
-    "depa-php": "./index.js"
+    "depa": "./cli.js"
   },
   "bugs": {
     "url": "https://github.com/krumIO/dependency-analyzer/issues"
   },
   "homepage": "https://github.com/krumIO/dependency-analyzer#readme",
   "dependencies": {
-    "php-parser": "^3.0.1"
+    "php-parser": "^3.0.1",
+    "yargs": "^15.3.1"
   }
 }
