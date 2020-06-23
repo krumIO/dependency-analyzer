@@ -14,16 +14,36 @@ npm link
 
 ## How to use
 
-### PHP
-
-To analyze a PHP project, run:
+To generally analyze a project's internal dependency structure, run:
 
 ```
-depa-php <DIRECTORY_PATH>
+// analyze the current directory for all supported languages
+depa
 ```
 
-or, to analyze the current directory, simply run:
+### Options
 
 ```
-depa-php .
+Options:
+  -e, --extensions  Extensions to analyze                              [array]
+  -d, --directory   Directory to analyze                               [string]
+  -o, --output      Output file name (default=output)                  [string]
+  -v, --version     Show version number                                [boolean]
+  -h, --help        Show help                                          [boolean]
 ```
+
+#### Example
+
+Running
+
+```
+depa -e php js -d ./myPhpProject/ -o myPhpProjectAnalysis.json
+```
+
+will analyze the `./myPhpProject/` directory for `*.php` and `*.js` files and write the output to the `myPhpProjectAnalysis.json` file.
+
+*NOTE: `js` is not yet supported.*
+
+### Supported languages
+
+Currently, the only supported language is `php`, but there are plans to support more languages.
