@@ -4,7 +4,7 @@ const path = require('path');
 
 const { retrieveDependencies : getPHPDependencies } = require('./php/analyze');
 
-module.exports.retrieveDependenciesFromDirectory = (root, extensions, output) => {
+module.exports.retrieveDependenciesFromDirectory = (root, extensions, output, output_type) => {
     const dependencies = [];
 
     let extensionNumMap = {};
@@ -56,7 +56,7 @@ module.exports.retrieveDependenciesFromDirectory = (root, extensions, output) =>
     }
     process.stdout.write("\n");
 
-    buildOutput(dependencies, output);
+    buildOutput(dependencies, output, output_type);
 }
 
 const walkSync = (dir, callback) => {
@@ -72,25 +72,39 @@ const walkSync = (dir, callback) => {
     });
 };
 
-const buildOutput = (dependencies, output) => {
-    let nodesSet = new Set();
-    let edges = [];
-    dependencies.forEach((entry) => {
-        nodesSet.add(entry.path);
-        entry.includes.forEach((include) => {
-            edges.push({
-                source: entry.path,
-                target: include,
-            });
-            nodesSet.add(include)
+const buildOutput = (dependencies, output, output_type) => {
+    if (output_type === 'json') {
+        let nodesSet = new Set();
+        let edges = [];
+        dependencies.forEach((entry) => {
+            nodesSet.add(entry.path);
+            entry.includes.forEach((include) => {
+                edges.push({
+                    source: entry.path,
+                    target: include,
+                });
+                nodesSet.add(include)
+            })
         })
-    })
-    let nodes = Array.from(nodesSet);
+        let nodes = Array.from(nodesSet);
 
-    let data = {
-        nodes: nodes,
-        edges: edges,
-    };
-
-    fs.writeFileSync(output, JSON.stringify(data, null, 2));
+        let data = {
+            nodes: nodes,
+            edges: edges,
+        };
+        fs.writeFileSync(output, JSON.stringify(data, null, 2));
+    }
+    else if (output_type === 'dot') {
+        // TODO: split into distinct/disconnected graphs
+        let content = '';
+        content += 'digraph {';
+        dependencies.forEach((entry) => {
+            entry.includes.forEach((include) => {
+                content += '\n\t"' + entry.path + '" -> "' + include + '"';
+            });
+        });
+        content += '\n}';
+        console.log('writing dot');
+        fs.writeFileSync(output, content);
+    }
 }

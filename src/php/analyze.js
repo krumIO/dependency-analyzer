@@ -47,7 +47,7 @@ const getIncludes = (ast, path) => {
             }
             else if (target.kind === 'variable' || target && target.what && target.what.kind === 'variable') {
                 prefix = path.substring(0, path.lastIndexOf('/'));
-                includePath = 'VARIABLE';
+                includePath = '/VARIABLE';
             }
             else if (target.kind === 'call') {
                 if (target && target.arguments[0] && target.arguments[0].value) {
@@ -62,6 +62,10 @@ const getIncludes = (ast, path) => {
             else {
               includes.push(child.expression);
               return;
+            }
+            // TODO: handle ../'s in path
+            if (includePath[0] !== '/') {
+                includePath = '/' + includePath;
             }
             includes.push(prefix + includePath);
           }
