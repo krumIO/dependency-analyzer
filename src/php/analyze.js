@@ -1,9 +1,10 @@
 
 const engine = require('php-parser');
+const path = require('path');
 
-module.exports.retrieveDependencies = (file, path) => {
+module.exports.retrieveDependencies = (file, filepath) => {
     let ast = parser.parseCode(file);
-    return getIncludes(ast, path);
+    return getIncludes(ast, filepath);
 };
 
 // initialize a new parser instance
@@ -19,7 +20,7 @@ const parser = new engine({
     }
   });
 
-const getIncludes = (ast, path) => {
+const getIncludes = (ast, filepath) => {
     let includes = [];
     if (ast.children) {
       ast.children.forEach((child) => {
@@ -38,7 +39,7 @@ const getIncludes = (ast, path) => {
                     target.left &&
                     target.left.arguments[0] &&
                     target.left.arguments[0].value === '__FILE__') {
-                      prefix = path.substring(0, path.lastIndexOf('/'));
+                      prefix = filepath.substring(0, filepath.lastIndexOf('/'));
                   }
               }
               if (target && target.right && target.right.value) {
@@ -46,31 +47,31 @@ const getIncludes = (ast, path) => {
               }
             }
             else if (target.kind === 'variable' || target && target.what && target.what.kind === 'variable') {
-                prefix = path.substring(0, path.lastIndexOf('/'));
+                prefix = filepath.substring(0, filepath.lastIndexOf('/'));
                 includePath = '/VARIABLE';
             }
             else if (target.kind === 'call') {
                 if (target && target.arguments[0] && target.arguments[0].value) {
-                    prefix = path.substring(0, path.lastIndexOf('/'));
+                    prefix = filepath.substring(0, filepath.lastIndexOf('/'));
                     includePath = target.arguments[0].value;
                 }
             }
             else if (target.value) {
-              prefix = path.substring(0, path.lastIndexOf('/'));
+              prefix = filepath.substring(0, filepath.lastIndexOf('/'));
               includePath = target.value;
             }
             else {
               includes.push(child.expression);
               return;
             }
-            // TODO: handle ../'s in path
             if (includePath[0] !== '/') {
                 includePath = '/' + includePath;
             }
-            includes.push(prefix + includePath);
+            let finalPath = path.normalize(prefix + includePath);
+            includes.push(finalPath);
           }
           if (child.body) {
-              includes = includes.concat(getIncludes(child.body, path));
+              includes = includes.concat(getIncludes(child.body, filepath));
           }
       });
     }
